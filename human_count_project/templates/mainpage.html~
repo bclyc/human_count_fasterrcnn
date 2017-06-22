@@ -1,0 +1,20 @@
+$def with(result_to_show)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+$for cameradata in result_to_show:
+    <div>
+    <span>$cameradata['uid']
+        <img src="static/$cameradata['image']"/>
+        共$len(cameradata['frames'])个人
+    </span>
+    </div>
+
+</body>
+</html>

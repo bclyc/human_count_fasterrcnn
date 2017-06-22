@@ -1,0 +1,74 @@
+$def with(folder_list)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>相机历史</title>
+
+<link rel="stylesheet" href="../static/css/lightbox.css" />
+<script type="text/javascript" src="../static/js/jquery-2.2.3.min.js"></script>
+
+
+
+<script>
+    function AutoResize(maxWidth,maxHeight,objImg){
+	var img = new Image();
+	img.src = objImg.src;
+	var hRatio;
+	var wRatio;
+	var Ratio = 1;
+	var w = img.width;
+	var h = img.height;
+	wRatio = maxWidth / w;
+	hRatio = maxHeight / h;
+	if (maxWidth ==0 && maxHeight==0){
+	Ratio = 1;
+	}else if (maxWidth==0){//
+	if (hRatio<1) Ratio = hRatio;
+	}else if (maxHeight==0){
+	if (wRatio<1) Ratio = wRatio;
+	}else if (wRatio<1 || hRatio<1){
+	Ratio = (wRatio<=hRatio?wRatio:hRatio);
+	}
+	if (Ratio<1){
+	    w = w * Ratio;
+	    h = h * Ratio;
+	    }
+	    objImg.height = h;
+	    objImg.width = w;
+    }
+
+</script>
+</head>
+
+<body>
+$ folderDir=folder_list[0][0];
+$ picList=folder_list[0][1];
+$ camuid=folder_list[0][2];
+$ dateString=picList[0][0:4]+"年"+picList[0][4:6]+"月"+picList[0][6:8]+"日";
+$ hour=picList[0][9:11];
+
+<div style="width:100%;margin-bottom:40px">
+<label style="font-size:150%;">相机 <spam style="font-weight:bold">$camuid, $dateString, $hour时</spam> 历史识别图片</label>
+<input type="button" value="返回" style="margin-left:50px" onclick="window.history.back()">
+</div>
+
+$for index,pic in enumerate(picList):
+    $ timeString=pic[9:11]+"点"+pic[11:13]+"分"+pic[13:15]+"秒";
+
+    <div style="float:left;margin:0px 30px 30px 30px;">
+
+    <div>
+	<a id="a$index" data-lightbox="image" title="" href="static/$folderDir/$pic">
+	<img alt="" src="static/$folderDir/$pic" style="" onload="AutoResize(300,200,this)"></img>
+	</a>
+	</div>
+
+	<div>
+	<p style="margin:0px;width:240px;height:25px;font-size:80%" align="center" >$timeString</p>
+	</div>
+	</div>
+
+<script type="text/javascript" src="../static/js/lightbox.js"></script>
+</body>
+</html>

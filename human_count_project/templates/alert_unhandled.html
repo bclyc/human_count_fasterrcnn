@@ -1,0 +1,79 @@
+$def with(alert_pics)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>相机历史</title>
+    <link rel="stylesheet" href="../static/css/lightbox.css" />
+    <script type="text/javascript" src="../static/js/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="../static/js/mainpage.js"></script>
+    <script>
+    function AutoResize(maxWidth,maxHeight,objImg){
+	var img = new Image();
+	img.src = objImg.src;
+	var hRatio;
+	var wRatio;
+	var Ratio = 1;
+	var w = img.width;
+	var h = img.height;
+	wRatio = maxWidth / w;
+	hRatio = maxHeight / h;
+	if (maxWidth ==0 && maxHeight==0){
+	Ratio = 1;
+	}else if (maxWidth==0){//
+	if (hRatio<1) Ratio = hRatio;
+	}else if (maxHeight==0){
+	if (wRatio<1) Ratio = wRatio;
+	}else if (wRatio<1 || hRatio<1){
+	Ratio = (wRatio<=hRatio?wRatio:hRatio);
+	}
+	if (Ratio<1){
+	    w = w * Ratio;
+	    h = h * Ratio;
+	    }
+	    objImg.height = h;
+	    objImg.width = w;
+    }
+
+    function alertjump(url){
+	postMainpage(url);
+	alert("标记成功");
+	window.location.reload();
+    }
+    </script>
+</head>
+
+<body>
+$if len(alert_pics)==0:
+    <div style="width:100%">
+    <label style="font-size:150%;margin-bottom:0px">无未处理警报</label>
+    <input type="button" value="返回" style="margin-left:50px" onclick="window.history.back()">
+    </div>
+$else:
+    <div style="width:100%">
+    <label style="font-size:150%;margin-bottom:0px">未处理警报 共<spam style="font-weight:bold">$len(alert_pics)</spam>个</label>
+    <input type="button" value="返回" style="margin-left:50px" onclick="window.history.back()">
+    </div>
+    <hr><br>
+
+    $for index,alert_pic in enumerate(alert_pics):
+        $ date_string = alert_pic['date'][0:4]+"年"+alert_pic['date'][4:6]+"月"+alert_pic['date'][6:8]+"日"+alert_pic['date'][9:11]+"时"+alert_pic['date'][11:13]+"分"+alert_pic['date'][13:15]+"秒";
+        <div data-num="" data-index="$index" name="camDiv" style="width:300px;height:350px;float:left;margin:10px">
+
+		<div>
+		<a id="alert$alert_pic['uid']" data-lightbox="image" title="" href="static/$alert_pic['path']">
+		<img alt="" src="static/$alert_pic['path']" style="" onload="AutoResize(300,200,this)"></img>
+		</a>
+		</div>
+		<div>
+		<p style="margin-bottom:10px" align="left" style="width:244px;height:25px">时间:$date_string </p>
+        <p style="margin-bottom:10px" align="left" style="width:244px;height:25px">相机: <spam style="font-weight:bold">$alert_pic['uid']</spam> </p>
+		<input type="button" style="float:right;margin-right:10px" value="标为误报" onclick="alertjump('mainpage.html?action=alert&flag=F&pic=$alert_pic['path']')">
+		<input type="button" style="float:right;margin-right:10px" value="标为异常" onclick="alertjump('mainpage.html?action=alert&flag=T&pic=$alert_pic['path']')">
+		</div>
+
+		</div>
+
+<script type="text/javascript" src="../static/js/lightbox.js"></script>
+</body>
+</html>

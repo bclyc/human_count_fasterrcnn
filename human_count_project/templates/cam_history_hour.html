@@ -1,0 +1,66 @@
+$def with(folder_list)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>相机历史</title>
+
+<script>
+    function AutoResize(maxWidth,maxHeight,objImg){
+	var img = new Image();
+	img.src = objImg.src;
+	var hRatio;
+	var wRatio;
+	var Ratio = 1;
+	var w = img.width;
+	var h = img.height;
+	wRatio = maxWidth / w;
+	hRatio = maxHeight / h;
+	if (maxWidth ==0 && maxHeight==0){
+	Ratio = 1;
+	}else if (maxWidth==0){//
+	if (hRatio<1) Ratio = hRatio;
+	}else if (maxHeight==0){
+	if (wRatio<1) Ratio = wRatio;
+	}else if (wRatio<1 || hRatio<1){
+	Ratio = (wRatio<=hRatio?wRatio:hRatio);
+	}
+	if (Ratio<1){
+	    w = w * Ratio;
+	    h = h * Ratio;
+	    }
+	    objImg.height = h;
+	    objImg.width = w;
+    }
+
+</script>
+</head>
+
+<body>
+$ folderDir=folder_list[0][0];
+$ hourList=folder_list[0][1];
+$ camuid=folder_list[0][2];
+$ date=folderDir[len(folderDir)-8:len(folderDir)];
+$ dateString=date[0:4]+"年"+date[4:6]+"月"+date[6:8]+"日";
+
+<div style="width:100%">
+<label style="font-size:150%;margin-bottom:0px">相机 <spam style="font-weight:bold">$camuid, $dateString</spam> 历史识别图片时间线</label>
+<input type="button" value="返回" style="margin-left:50px" onclick="window.history.back()">
+</div>
+
+$for index,hour in enumerate(hourList):
+    $if not len(hour)==0:
+        <a href="cam_history_pics.html?camuid=$camuid&date=$date&hour=$index">
+        <div style="float:left;margin:0px 30px 30px 30px;">
+        <div style="background:url('static/images/folder_small.png') no-repeat;width:240px;height:240px;">
+        <img alt="" src="static/$folderDir/$hour[len(hour)-1]" style="margin:50px 0 0 25px" onload="AutoResize(200,140,this)"></img>
+        </div>
+
+        <div>
+        <p style="margin:0px;width:240px;height:25px;font-size:80%" align="center" >$index时至$(index+1)时, 共有$len(hour) 张识别图片</p>
+        </div>
+        </div>
+        </a>
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+$def with(data_to_pass)
+$ camera_list=data_to_pass[0];
+$ mode_list=data_to_pass[1];
+
+<!DOCTYPE html>
+<html lang="en">
+<HEAD>
+<meta charset="utf-8">
+<TITLE>设置相机报警时间段</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<script language="JavaScript" src="../static/js/setmode.js"></script>
+<script language="JavaScript">
+
+function moveOption(e1, e2){
+	try{
+		for(var i=0;i<e1.options.length;i++){
+			if(e1.options[i].selected){
+				var e = e1.options[i];
+				e2.options.add(new Option(e.text, e.value));
+				e1.remove(i);
+				i=i-1
+			}
+		}
+		document.myform.camera.value=getvalue(document.myform.list2);
+		document.myform.week.value=getvalue(document.myform.list4);
+	}
+	catch(e){}
+}
+function getvalue(geto){
+	var allvalue = "";
+	for(var i=0;i<geto.options.length;i++){
+		allvalue +=geto.options[i].value + ",";
+	}
+	return allvalue;
+}
+
+
+</script>
+
+<style>
+.camtable tr td
+{
+	padding:10px;
+	font-size:120%;
+	text-align:center;
+}
+</style>
+
+</HEAD>
+
+<BODY>
+<div style="margin-bottom:100px">
+
+<h2 style="display:inline">当前各预案报警时间段</h2>
+<input type="button" value="返回主页" style="float:right;margin-right:200px" onclick="window.location.href='index.html'"/>
+<input type="button" value="返回摄像头页面" style="float:right;margin-right:50px" onclick="window.location.href='mainpage.html'"/>
+<table border="1" class="camtable" style="margin-left:100px;margin-top:50px">
+<tr>
+<th></th>
+<th>预案名</th>
+<th>周循环</th>
+<th>报警时间段</th>
+<th>相机列表</th>
+</tr>
+$for index,mode in enumerate(mode_list):
+	<tr>
+	<td><input type="radio" name="radiocheck" value="$mode['mode_name']"></td>
+	<td>$mode['mode_name']</td>
+	<td>$mode['week']</td>
+	<td>$mode['run_time']</td>
+	<td>$mode['cameras']</td>
+	</tr>
+</table>
+
+<form action="setmode.html" method="post" onsubmit="return radiofn()">
+<input type="hidden" name="action" value="mode_delete"/>
+<input type="hidden" id="mode_name" name="mode_name" value=""/>
+<input type="submit" value="删除预案" style="margin:30px 0 0 100px">
+</form>
+
+</div>
+
+<hr style="margin-top:50px"></hr>
+
+<div>
+<h2 style="display:inline">添加预案</h2>
+
+<p><spam style="font-weight:bold">选择相机:</spam>选定一项或多项相机然后点击添加或移除(按住shift或ctrl可以多选)，或在选择项上双击进行添加和移除。</p>
+</div>
+
+<form action="setmode.html" method="post" name="myform" onsubmit="return submitCheck()">
+<table border="0" style="width:300px;height:auto;margin-left:200px;">
+<tr>
+<td width="40%">
+<select style="width:100%" multiple name="list1" size="20" ondblclick="moveOption(document.myform.list1, document.myform.list2)">
+$for index,camera in enumerate(camera_list):
+	<option value="$camera['uid']">$camera['uid']</option>
+
+</select>
+</td>
+<td width="20%" align="center">
+<input type="button" value="添加" onclick="moveOption(document.myform.list1, document.myform.list2)">
+
+
+<input type="button" value="删除" onclick="moveOption(document.myform.list2, document.myform.list1)">
+</td>
+<td width="40%">
+<select style="width:100%;" multiple name="list2" size="20" ondblclick="moveOption(document.myform.list2, document.myform.list1)">
+</select>
+</td>
+</tr>
+</table>
+<br>
+
+<p><spam style="font-weight:bold">设定周循环:</spam>选定一项或多项然后点击添加或移除(按住shift或ctrl可以多选)，或在选择项上双击进行添加和移除。</p>
+<table border="0" style="width:300px;height:auto;margin-left:200px;">
+<tr>
+<td width="40%">
+<select style="width:100%" multiple name="list3" size="20" ondblclick="moveOption(document.myform.list3, document.myform.list4)">
+	<option value="星期一">星期一</option>
+	<option value="星期二">星期二</option>
+	<option value="星期三">星期三</option>
+	<option value="星期四">星期四</option>
+	<option value="星期五">星期五</option>
+	<option value="星期六">星期六</option>
+	<option value="星期日">星期日</option>
+
+</select>
+</td>
+<td width="20%" align="center">
+<input type="button" value="添加" onclick="moveOption(document.myform.list3, document.myform.list4)">
+
+
+<input type="button" value="删除" onclick="moveOption(document.myform.list4, document.myform.list3)">
+</td>
+<td width="40%">
+<select style="width:100%;" multiple name="list4" size="20" ondblclick="moveOption(document.myform.list4, document.myform.list3)">
+</select>
+</td>
+</tr>
+</table>
+<br>
+
+<table>
+<tr>
+<td>预案内相机：</td>
+<td><input type="text" name="camera" size="70" value="" readonly="readonly"/></td>
+</tr>
+<tr>
+<tr>
+<td>周循环：</td>
+<td><input type="text" name="week" size="70" value="" readonly="readonly"/></td>
+</tr>
+<tr>
+<tr>
+<td>输入报警时间段：</td>
+<td> <input type="text" name="run_time" size="70" value=""/></td>
+</tr>
+<tr>
+<td></td>
+<td style="font-size:80%">注：开始时间和结束时间用24小时制HHMM格式表示(范围0000到2359), 中间用"-"隔开, 不要有空格, 请关闭输入法. 若需要多个时间段, 时间段之间用“,”隔开.示例：2200-2359,0000-0600</td>
+</tr>
+<tr>
+<td>预案名称：</td>
+<td><input type="text" name="plan_name" size="70" value=""/></td>
+</tr>
+
+<tr>
+<td></td>
+<td><input type="submit" size="70" value="添加预案"/></td>
+</tr>
+</table>
+<input type="hidden" name="action" value="mode_set"/>
+</form>
+
+
+
+</BODY>
+</HTML>

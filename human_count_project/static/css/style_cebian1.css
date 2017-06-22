@@ -1,0 +1,70 @@
+@charset "utf-8";
+/* CSS Document */
+#TabMain {
+    width: 1000px;
+    height: 1000px;
+    margin: 0 auto;
+}
+.tabItemContainer {
+    width: 100px;
+    height: 550px;
+    float: left;
+}
+.tabBodyContainer {
+    width: 700px;
+    height: 550px;
+    float: left;
+    background-color: #fff;
+    border: 1px solid #61BEE4;
+    -webkit-border-radius: 0 5px 5px 0;
+    -moz-border-radius: 0 5px 5px 0;
+    border-radius: 0 5px 5px 0;
+    margin-left: 1px;
+}
+.tabItemContainer>li {
+    list-style: none;
+    text-align: center;
+}
+.tabItemContainer>li>a {
+    float: left;
+    width: 100%;
+    padding: 30px 0 30px 0;
+    font: 16px "微软雅黑", Arial, Helvetica, sans-serif;
+    color: #808080;
+    cursor: pointer;
+    text-decoration: none;
+    border:1px solid transparent;
+}
+.tabItemCurrent {
+    background-color: #fff;
+    border: 1px solid #61BEE4 !important;
+    border-right: 1px solid #fff !important;
+    position: relative;
+    -webkit-border-radius: 5px 0 0 5px;
+    -moz-border-radius: 5px 0 0 5px;
+    border-radius: 5px 0 0 5px;
+}
+.tabItemContainer>li>a:hover {
+    color: #61BEE4;
+}
+.tabBodyItem {
+    position: absolute;
+    width: 677px;
+    height: 500px;
+    display: none;
+}
+.tabBodyItem>p {
+    font: 13px "微软雅黑", Arial, Helvetica, sans-serif;
+    text-align: center;
+    margin-top: 10px;
+	float:left;
+}
+
+
+.tabBodyItem>p>a {
+    text-decoration: none;
+    color: #0F3;
+}
+.tabBodyCurrent{
+    display:block;
+}

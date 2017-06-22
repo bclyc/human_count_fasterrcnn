@@ -1,0 +1,4 @@
+[default]
+interval=1.0
+cleanflag=0
+hidenotrunningflag=0

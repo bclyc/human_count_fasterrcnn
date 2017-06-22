@@ -1,0 +1,304 @@
+$def with(result)
+$ result_to_show=result[0];
+$ cam_without_person=result[1];
+$ clean_flag=result[2];
+$ cam_alert=result[3];
+$ hidenotrunning_flag=result[4];
+$ unhandled_num=result[5];
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Ranking</title>
+
+<script type="text/javascript" >
+window.videonum=$len(result_to_show);
+console.log($len(cam_without_person));
+</script>
+<link rel="stylesheet" href="../static/css/lightbox.css" />
+<script type="text/javascript" src="../static/js/jquery-2.2.3.min.js"></script>
+
+<script type="text/javascript" src="../static/js/mainpage.js"></script>
+<script type="text/javascript" src="../static/js/clock.js"></script>
+<script>
+var globaltime=20;
+
+function AutoResize(maxWidth,maxHeight,objImg){
+	var img = new Image();
+	img.src = objImg.src;
+	var hRatio;
+	var wRatio;
+	var Ratio = 1;
+	var w = img.width;
+	var h = img.height;
+	wRatio = maxWidth / w;
+	hRatio = maxHeight / h;
+	if (maxWidth ==0 && maxHeight==0){
+	Ratio = 1;
+	}else if (maxWidth==0){//
+	if (hRatio<1) Ratio = hRatio;
+	}else if (maxHeight==0){
+	if (wRatio<1) Ratio = wRatio;
+	}else if (wRatio<1 || hRatio<1){
+	Ratio = (wRatio<=hRatio?wRatio:hRatio);
+	}
+	if (Ratio<1){
+	    w = w * Ratio;
+	    h = h * Ratio;
+	    }
+	    objImg.height = h;
+	    objImg.width = w;
+}
+
+function sortByNum(){
+	var aDiv = document.getElementsByName('camDiv');
+	var arr = [];
+	for(var i=0;i<aDiv.length;i++)
+	{
+		arr.push(aDiv[i]);  //aDiv是元素的集合，并不是数组，所以不能直接用数组的sort进行排序。
+	}
+	console.log(arr);
+
+	arr.sort(function(a,b){return b.getAttribute('data-num') - a.getAttribute('data-num')});
+	for(var i=0;i<arr.length;i++)
+	{
+		document.getElementById('DivWithPeople').appendChild(arr[i]); //将排好序的元素，重新塞到body里面显示。
+	}
+
+	console.log(arr);
+	
+	document.getElementById('sortByDef').style.display="";
+	document.getElementById('sortByNum').style.display="none";
+}
+
+function sortByDef(){
+	var aDiv = document.getElementsByName('camDiv');
+	var arr = [];
+	for(var i=0;i<aDiv.length;i++)
+	{
+		arr.push(aDiv[i]);  //aDiv是元素的集合，并不是数组，所以不能直接用数组的sort进行排序。
+	}
+	console.log(arr);
+
+	arr.sort(function(a,b){return a.getAttribute('data-index') - b.getAttribute('data-index')});
+	for(var i=0;i<arr.length;i++)
+	{
+		document.getElementById('DivWithPeople').appendChild(arr[i]); //将排好序的元素，重新塞到body里面显示。
+	}
+
+	console.log(arr);
+
+	document.getElementById('sortByNum').style.display="";
+	document.getElementById('sortByDef').style.display="none";
+}
+
+function showCamWithoutP(){
+	document.getElementById('DivWithoutPeople').style.display="";
+	document.getElementById('hideCamWithoutP').style.display="";
+	document.getElementById('showCamWithoutP').style.display="none";
+	setCleanflag(0);
+}
+
+function hideCamWithoutP(){
+	document.getElementById('DivWithoutPeople').style.display="none";
+	document.getElementById('hideCamWithoutP').style.display="none";
+	document.getElementById('showCamWithoutP').style.display="";
+	setCleanflag(1);
+}
+
+function showCamNotRunning(){
+	document.getElementById('DivAlert').style.display="";
+	document.getElementById('hideCamNotRunning').style.display="";
+	document.getElementById('showCamNotRunning').style.display="none";
+	setHidenotrunningflag(0);
+}
+
+function hideCamNotRunning(){
+	document.getElementById('DivAlert').style.display="none";
+	document.getElementById('hideCamNotRunning').style.display="none";
+	document.getElementById('showCamNotRunning').style.display="";
+	setHidenotrunningflag(1);
+}
+
+
+function jump(camuid){
+    var uid="";
+    uid=camuid;
+    window.location.href="cam_history.html?camuid="+uid;
+
+}
+
+function alertjump(url){
+	postMainpage(url);
+	alert("标记成功");
+	window.location.reload();
+}
+
+function timechange(){
+	var myselect=document.getElementById("timeselect");
+	globaltime=myselect.options[myselect.selectedIndex].value;
+	window.location.reload();
+
+}
+
+function CountDown(time){
+
+    if(time==0){
+        window.location.reload();
+    }else{
+        document.getElementById("count_down").innerHTML=time+"秒后刷新";
+        //console.log(time+"秒后刷新");
+        time--;
+        setTimeout("CountDown("+time+")",1000);
+    }
+}
+
+window.onload=function(){
+    var myselect=document.getElementById("timeselect");
+	globaltime=myselect.options[myselect.selectedIndex].value;
+    var time=globaltime;
+    CountDown(time);
+	if($clean_flag==0){
+		document.getElementById('DivWithoutPeople').style.display="";
+		document.getElementById('hideCamWithoutP').style.display="";
+		document.getElementById('showCamWithoutP').style.display="none";
+
+	}else if($clean_flag==1){
+		document.getElementById('DivWithoutPeople').style.display="none";
+		document.getElementById('hideCamWithoutP').style.display="none";
+		document.getElementById('showCamWithoutP').style.display="";
+
+	}if($hidenotrunning_flag==0){
+		document.getElementById('DivAlert').style.display="";
+		document.getElementById('hideCamNotRunning').style.display="none";
+		document.getElementById('showCamNotRunning').style.display="none";
+
+	}else if($hidenotrunning_flag==1){
+		document.getElementById('DivAlert').style.display="none";
+		document.getElementById('hideCamNotRunning').style.display="none";
+		document.getElementById('showCamNotRunning').style.display="";
+
+	}
+};
+</script>
+
+<style>
+input
+{
+margin:0 30px 0 0;
+}
+</style>
+</head>
+<body>
+<div id="images">
+
+
+
+<div style="margin:30px 30px 0 30px">
+    当前时间:<label id=clock></label>
+    <input type="button" value="返回主页" style="float:right;margin-right:100px" onclick="window.location.href='index.html'"/>
+    <input type="button" value="设置摄像头报警时间段" style="float:right;margin-right:50px" onclick="window.location.href='setmode.html'"/>
+
+    <br><br>
+    <input id="sortByNum" type="button" value="切换至:按人数排序" onclick="sortByNum()" >
+    <input id="sortByDef" type="button" value="切换至:按默认排序" onclick="sortByDef()" style="display:none">
+    <input id="hideCamWithoutP" type="button" value="隐藏无人相机" onclick="hideCamWithoutP()" style="margin:0;">
+    <input id="showCamWithoutP" type="button" value="显示无人相机" onclick="showCamWithoutP()" style="display:none;margin:0;">(需要刷新)
+    <input id="hideCamNotRunning" type="button" value="隐藏不在监控时间段的相机" onclick="hideCamNotRunning()" >
+    <input id="showCamNotRunning" type="button" value="显示不在监控时间段的相机" onclick="showCamNotRunning()" style="display:none">
+    <span style="margin:0px;margin-left:100px" id="count_down"></span>
+	<input type="button" value="手动刷新" style="margin-left:10px" onclick="window.location.reload()"/>
+
+	设定刷新频率<select name="select" id="timeselect" onchange="timechange()">
+    <option value="5">5秒</option>
+	<option value="10">10秒</option>
+	<option value="20" selected="selected">20秒</option>
+	<option value="30">30秒</option>
+	<option value="60">60秒</option>
+    </select>
+
+
+</div>
+<br>
+<div id="DivAlert"  style="overflow:auto;margin-top:50px">
+	<h1 style="margin:0 30px;display:inline">报警</h1>
+	<spam style="margin-left:30px">共有$unhandled_num个未处理警报</spam>
+	<input type="button" style="margin-left:20px" value="查看未处理警报" onclick="window.location.href='alert_unhandled.html'">
+	<input type="button" style="margin-left:10px" value="查看历史已处理警报" onclick="window.location.href='alert_history.html'">
+	<hr></hr>
+	<div style="margin:0 0 100px 50px">
+	<p>当前有$len(cam_alert)个报警</p>
+	$for index,camera in enumerate(cam_alert):
+		<div data-num="" data-index="$index" name="camDiv" style="width:300px;height:300px;float:left;margin:10px;border:3px solid #F00">
+
+		<div>
+		<a id="alert$camera['uid']" data-lightbox="image" title="" href="static/$camera['path']">
+		<img alt="" src="static/$camera['path']" style="" onload="AutoResize(300,200,this)"></img>
+		</a>
+		</div>
+		<div>
+		<p style="margin-bottom:10px" align="center" style="width:244px;height:25px">相机:$camera['uid']  </p>
+		<input type="button" style="float:right;margin-right:10px" value="标为误报" onclick="alertjump('mainpage.html?action=alert&flag=F&pic=$camera['path']')">
+		<input type="button" style="float:right;margin-right:10px" value="标为异常" onclick="alertjump('mainpage.html?action=alert&flag=T&pic=$camera['path']')">
+		</div>
+
+		</div>
+
+	</div>
+
+</div>
+
+<div id="DivWithPeople"  style="overflow:auto;margin-top:50px">
+	<h1 style="margin:0 30px">有人相机</h1>
+	<hr></hr>
+	$for index_camera in range(len(result_to_show)):
+		$ cameradata=result_to_show[index_camera];
+		<div data-num="$len(cameradata['frames'])" data-index="$index_camera" name="camDiv" style="width:300px;height:300px;float:left;margin:10px">
+
+		<div>
+		<a id="a$index_camera" data-lightbox="image" title="" href="static/$cameradata['image']">
+		<img alt="" src="static/$cameradata['image']" style="" onload="AutoResize(300,200,this)"></img>
+		</a>
+		</div>
+		<div>
+		<p style="margin-bottom:10px" align="center" style="width:244px;height:25px">相机:$cameradata['uid']  共$len(cameradata['frames'])个人</p>
+		<input type="button" style="float:right;margin-right:10px" value="查看历史" onclick="jump('$cameradata["uid"]')">
+		</div>
+
+		</div>
+
+</div>
+
+<div id="DivWithoutPeople"  style="overflow:auto;margin-top:50px">
+<h1 style="margin:0 30px">无人相机</h1>
+<hr></hr>
+$for index_camera in range(len(cam_without_person)):
+	$ cameradata=cam_without_person[index_camera];
+	<div data-index="$index_camera" name="camDivNoPerson" style="width:300px;height:300px;float:left;margin:10px;">
+
+	<div align="center">
+	<a id="aN$index_camera" data-lightbox="image" style="margin:auto" title="" href="static/$cameradata['image']">
+	<img alt="" src="static/$cameradata['image']"  onload="AutoResize(300,200,this)"></img>
+	</a>
+	</div>
+	<div align="center">
+	<p align="center" style="width:244px;height:25px">相机:$cameradata['uid']  无人</p>
+    <input type="button" style="float:right;margin-right:10px;align-self:flex-end;" value="查看历史" onclick="jump('$cameradata["uid"]')">
+	</div>
+
+	</div>
+</div>
+
+
+
+</div>
+
+<script>
+    var clock = new Clock();
+    clock.display(document.getElementById("clock"));
+</script>
+
+<script type="text/javascript" src="../static/js/lightbox.js"></script>
+</body>
+</html>

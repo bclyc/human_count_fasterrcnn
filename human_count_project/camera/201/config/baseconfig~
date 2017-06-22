@@ -1,0 +1,8 @@
+[config]
+mainBoxThreshold = 5
+maxBoxNumPerImage = 200
+areaFilter = True
+areaFilterThreshold = 26
+
+maxPerserveFrameNumber = 1000
+deleteNumberWhenExceed = 100

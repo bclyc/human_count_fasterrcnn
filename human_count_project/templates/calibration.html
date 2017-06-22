@@ -1,0 +1,216 @@
+$def with(output)
+<!Doctype html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="static/css/style1.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="static/css/style_cebian1.css" type="text/css" media="all"/>
+
+    <script type="text/javascript" src="static/js/jquery-1.4.1.min1.js"></script>
+   <script src="static/js/biaoding1.js" type="text/javascript"></script>
+    <style type="text/css">
+	html,body,header,aside,section,footer,form,fieldset,legend,ol,li{
+		margin:0;
+		padding:0;
+	}
+	body{
+		background:#ffffff;
+		color:#111111;
+		padding:20px;
+	}
+	header{
+	  background: #ffffff;
+	  -webkit-border-radius: 5px;
+	  width: 700px;
+	  margin:auto;
+	}
+
+	article{
+	  background: #ffffff;
+	  -webkit-border-radius: 5px;
+	  width: 700px;
+	  margin:auto;
+	}
+
+	aside{
+		background:#ffffff;
+		color:#111111;
+		padding:20px;
+		float:left; /*设置横排*/
+		width:120px;
+		height:450px;
+	}
+
+	aside button{
+		margin:20px;
+	}
+
+	aside fieldset{
+		margin-bottom:10px;
+		margin:20px;
+		padding:20px;
+		border:20px；
+		border-radius:5px;
+		border:solid 2px #61BEE4;
+	}
+	aside fieldset legend{
+		color:#61BEE4;
+		font-size:14px;
+		font-weight:bold;
+	}
+	aside fieldset ol li{
+		background:#ffffff;
+		border-color:#61BEE4;
+		list-style:none;
+		border-style:solid;
+		border-width:2px;
+		border-radius:5px;
+		padding:5px 10px;
+		margin-bottom:10px;
+	}
+
+	aside label{
+		font-size:12px;
+		width:110px;
+	}
+
+	section{
+		background:#ffffff;
+		color:#111111;
+		float:none; /*设置横排*/
+		width:500px;
+		height:450px;
+	    margin:auto;
+	}
+	section fieldset{
+		background:#ffffff;
+		border-color:#ffffff;
+		border-radius:5px;
+		padding:10px;
+		margin-bottom:10px;
+		margin:20px;
+		padding:20px;
+		border:20px；
+	}
+
+	section ol li{
+		list-style:none;
+		padding:5px 10px;
+	}
+	section label{
+		float:inherit;
+		font-size:12px;
+		width:110px;
+	}
+	button{
+		float:inherit;
+	}
+
+	section input([type=txt]),section input([type=number]){
+		background:#ffffff;
+		border:#fc3 solid 1px;
+		outline:none;
+		padding:5px;
+		width:200px;
+	}
+
+	section fieldset fieldset button{
+		margin-left:50px;
+		margin-right:50px;
+	}
+    </style>
+
+    <title>density estimation</title>
+</head>
+
+<body>
+<!-- Header -->
+<div id="header">
+    <div class="shell">
+
+        <!-- Logo -->
+        <!--<h1 id="logo"><a href="#"></a></h1>-->
+        <!-- End Logo -->
+
+        <!-- Navigation -->
+        <div id="navigation">
+            <ul>
+                <li><a href="index.html">H&nbsp;&nbsp;o&nbsp;&nbsp;m&nbsp;&nbsp;e</a></li>
+                <li><a href="">H&nbsp;&nbsp;e&nbsp;&nbsp;l&nbsp;&nbsp;p</a></li>
+            </ul>
+        </div>
+        <!-- End Navigation -->
+
+    </div>
+</div>
+<!-- End Header -->
+
+
+<div id="main">
+    <div id="TabMain">
+        <div class="tabItemContainer">
+            <li><a class="tabItemCurrent" href="calibration.html?subpage=0">Tasks</a>
+            </li>
+            <li class="subcamera_or_not" style="display:none;"><a href="/calibration.html?subpage=1&taskid=$output['taskid']">Calibrate</a></li>
+        </div>
+        <div class="tabBodyContainer">
+            <div class="tabBodyItem tabBodyCurrent">
+                <article>
+                    <section>
+                        <fieldset>
+                                <ol>
+                                 $for i in output['name']:
+                        			<li>
+                            			<label><a href="/calibration.html?subpage=1&taskid=$i">Camera&nbsp;&nbsp;&nbsp;&nbsp;$i:</a></label>
+                        			</li>
+                                </ol>
+                        </fieldset>
+                    </section>
+                </article>
+            </div>
+            <div class="tabBodyItem">
+
+                <canvas id="myCanvas" width="$output['width']" height="$output['height']" style="border:1px solid #c3c3c3;">
+                    Your browser does not support the canvas element.
+                    </canvas>
+                <p></p>
+                <p>当前已标</p>
+                <p id="num_frame"></p>
+                <p>帧&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+                <button type="button" onClick="PrePage()" >上一张</button>
+                <button type="button" onClick="AfterPage()" >下一张</button>
+                <button type="button" onClick="SubmitPage()" >结&nbsp;&nbsp;&nbsp;&nbsp;束</button>
+                <button onclick="Recalibrate()">重新标定</button>
+                <br/>
+                <!--<p>Vanishing point：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>-->
+                <!--&lt;!&ndash;<p id="vanishing"></p>&ndash;&gt;-->
+                <!--&lt;!&ndash;<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>&ndash;&gt;-->
+                <!--&lt;!&ndash;<p>Rate of change：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>&ndash;&gt;-->
+                <!--&lt;!&ndash;<p id="rateing"></p>&ndash;&gt;-->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- End Footer -->
+
+</body>
+
+<script>
+	window.subpage=$output['subpage'];
+	var sumpage=$output['sumpage'];
+	var biaodingdir = "$output['biaodingdir']";
+	window.taskid="$output['taskid']";
+	window.width=$output['width'];
+	window.height=$output['height'];
+	var IImagePaths=[
+	    $for mimage in output['IImagePath']:
+	        "$mimage",
+	];
+</script>
+
+</html>
