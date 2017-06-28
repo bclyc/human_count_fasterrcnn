@@ -1,12 +1,12 @@
  /*
 * Copyright(C) 2011,Hikvision Digital Technology Co., Ltd 
 * 
-* File   name��main.cpp
-* Discription��demo for muti thread get stream
-* Version    ��1.0
-* Author     ��luoyuhua
-* Create Date��2011-12-10
-* Modification History��
+* File   name锟斤拷main.cpp
+* Discription锟斤拷demo for muti thread get stream
+* Version    锟斤拷1.0
+* Author     锟斤拷luoyuhua
+* Create Date锟斤拷2011-12-10
+* Modification History锟斤拷
 */
 
 #include <stdio.h>
@@ -22,6 +22,7 @@
 #include <string>
 #include <sys/time.h>
 #include <time.h>
+#include <mysql.h>
 using namespace std;
 
 typedef struct tagREAL_PLAY_INFO
@@ -31,13 +32,20 @@ typedef struct tagREAL_PLAY_INFO
 	int iChannel;
 }REAL_PLAY_INFO, *LPREAL_PLAY_INFO;
 
-string *CameraTask = new string[50];
+string *CameraTask = new string[500];
 int Num=0;
-int CameraID[50];
-int CameraChannel[50];
-NET_DVR_JPEGPARA CameraJpegParas[50];
-char**CameraPath = new char*[50];
+int CameraID[500];
+int CameraChannel[500];
+NET_DVR_JPEGPARA CameraJpegParas[500];
+char**CameraPath = new char*[500];
 char* BASEDIR="../human_count_project/camera/";
+
+sql::mysql::MySQL_Driver *driver;
+sql::Connection *con;
+
+driver = sql::mysql::get_mysql_driver_instance();
+con = driver->connect("tcp://127.0.0.1:3306", "user", "password");
+
 void GetCamera()
 {
 	ifstream in;
@@ -64,7 +72,7 @@ void OpenCamera()
 		//char DeviceDir[] = "../human_count_project/camera/";
 		char *DeviceDir=new char[400];
 		sprintf(DeviceDir,"%s%s/config/Device.ini",BASEDIR,TaskID);
-		IniFile ini(DeviceDir);  //读取配置文件
+		IniFile ini(DeviceDir);  //璇诲彇閰嶇疆鏂囦欢
 		unsigned int dwSize = 0;
 		char sSection[16] = "DEVICE";
 
@@ -74,8 +82,8 @@ void OpenCamera()
 		char *sPassword = ini.readstring(sSection, "password", "error", dwSize);
 		int iChannel = ini.readinteger(sSection, "channel", 0);
 
-		NET_DVR_DEVICEINFO_V30 struDeviceInfo;  //设备参数结构体
-		int iUserID = NET_DVR_Login_V30(sIP, iPort, sUserName, sPassword, &struDeviceInfo); //相机注册
+		NET_DVR_DEVICEINFO_V30 struDeviceInfo;  //璁惧鍙傛暟缁撴瀯浣�
+		int iUserID = NET_DVR_Login_V30(sIP, iPort, sUserName, sPassword, &struDeviceInfo); //鐩告満娉ㄥ唽
 		for(int i=0;iUserID==-1&&i<5;i++){
 			iUserID = NET_DVR_Login_V30(sIP, iPort, sUserName, sPassword, &struDeviceInfo);
 			
