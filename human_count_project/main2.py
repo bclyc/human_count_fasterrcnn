@@ -129,15 +129,13 @@ while run:
 
 
         try:
-            frames_path=camera['frame_path'];
-            CheckNewImage.remove_exceed(frames_path,filter=source_flag,max_threshold=camera['config']['config']['maxPerserveFrameNumber'],delete_num=camera['config']['config']['deleteNumberWhenExceed']);
-            CheckNewImage.remove_exceed(frames_path,filter=result_flag,max_threshold=camera['config']['config']['maxPerserveFrameNumber'],delete_num=camera['config']['config']['deleteNumberWhenExceed']);
-            CheckNewImage.remove_exceed(frames_path,filter=boundingbox_flag,max_threshold=camera['config']['config']['maxPerserveFrameNumber'],delete_num=camera['config']['config']['deleteNumberWhenExceed']);
+#             frames_path=camera['frame_path'];
+#             CheckNewImage.remove_exceed(frames_path,filter=source_flag,max_threshold=camera['config']['config']['maxPerserveFrameNumber'],delete_num=camera['config']['config']['deleteNumberWhenExceed']);
+#             CheckNewImage.remove_exceed(frames_path,filter=result_flag,max_threshold=camera['config']['config']['maxPerserveFrameNumber'],delete_num=camera['config']['config']['deleteNumberWhenExceed']);
+#             CheckNewImage.remove_exceed(frames_path,filter=boundingbox_flag,max_threshold=camera['config']['config']['maxPerserveFrameNumber'],delete_num=camera['config']['config']['deleteNumberWhenExceed']);
 
-            if camera.has_key('savedProgress'):
-                oneImage=CheckNewImage.get_last_new_image(frames_path,filter=source_flag,saved_progress=camera['savedProgress']);
-            else:
-                oneImage=CheckNewImage.get_last_new_image(frames_path,filter=source_flag);
+            frames_path = os.path.join('camera', camera)
+            oneImage=CheckNewImage.get_last_new_image(frames_path,filter=source_flag);
             if oneImage=='':
                 continue;
 
