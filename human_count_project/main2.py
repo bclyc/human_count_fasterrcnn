@@ -2,35 +2,31 @@
 import configLoad
 import os
 import shutil
-#import crash_on_ipy
 import CheckNewImage
-#import NdetectPerson
-#import maineval_voc
 import time
 import matplotlib.pyplot as plt
 import traceback
 from PIL import Image,ImageDraw,ImageFont
-
-print('beginToimport')
-
 import numpy as np
 import boxTu
 import glob
-print('mysqldb')
 import MySQLdb
-print('configParser')
 import ConfigParser
-print('endConfigParser')
 import cv2
-print('endCv2')
 import sys
 sys.path.append('../py-faster-rcnn/tools/')
-print('beginToimport demo2')
 import demo2
-print('begintoInitNet');
-net=demo2.initNet()
-print('endInitNet')
 
+net=demo2.initNet()
+
+import tf_faster_rcnn_inf as tf_inf
+
+print "begin to load tf model"
+detection_graph, category_index, sess = tf_inf.load_model_and_label_map(
+                                    "/data/model_zoo/faster_rcnn_resnet101_coco_11_,06_2017/frozen_inference_graph.pb",
+                                    os.path.join('/data/model_zoo', 'mscoco_label_map.pbtxt'),
+                                    90)
+print "loaded tf model"
 
 run=True;
 serverId = "725"
@@ -74,85 +70,90 @@ for i in range(0,cameraNum):
     picSaveMode.append(0);
     picSaveCount.append(0);    
 
+#get alarm modes
+sql1 = "select modeId,modeName,modeWeek,modeTime,modeCameras,modeFlag from ia_imageanalysis_schedule where modeFlag=1 "
+cursor.execute(sql1,[]);
+results1 = cursor.fetchall();
+modes = results1
+
 while run:
     #configLoad.load_count_config();
     #configLoad.load_cameras();
     #configLoad.load_camera_config();
     #clean_flag=int(configLoad.globalConfig['count_config']['default']['cleanflag']);
     
-    #get alarm modes
-    sql1 = "select modeId,modeName,modeWeek,modeTime,modeCameras,modeFlag from ia_imageanalysis_schedule where modeFlag=1 "
-    cursor.execute(sql1,[]);
-    results1 = cursor.fetchall();
-    modes = results1    
 
-    for camIndex,camera in enumerate(cameras):
+    for camIndex, camera in enumerate(cameras):
         #check max number;
         #camera
-#         if not os.path.exists(camera['config_path']+'Device.ini'):
-#             continue;
-#         mode_config = ConfigParser.ConfigParser();
-#         mode_config.read(camera['config_path']+'Device.ini');
-
-#         camUid=camera['uid'].strip();
-# 
-#         ip=mode_config.get('DEVICE','ip');
-#         ip=ip[0:(len(ip)-2)].strip();
-#         port=mode_config.get('DEVICE','port');
-#         port=port[0:(len(port)-2)].strip();
-#         username=mode_config.get('DEVICE','username');
-#         username=username[0:(len(username)-2)].strip();
-#         password=mode_config.get('DEVICE','password');
-#         password=password[0:(len(password)-2)].strip();
-#         channel=mode_config.get('DEVICE','channel');
-#         channel=channel[0:(len(channel)-2)].strip();
-# 
-#         try:
-#             sql = "select cameraId,cameraIp,cameraPort,cameraChannel,cameraLoginName,cameraLoginPassword from camera where cameraId=%s "
-#             cursor.execute(sql,[camUid]);
-#             results = cursor.fetchall();
-#             if len(results)==0 :
-#                 sql = "select ID from cameras order by ID DESC";
-#                 cursor.execute(sql);
-#                 results = cursor.fetchall();
-#                 if len(results)>0:
-#                     dbcamid=results[0][0]+1;
-#                 else:
-#                     dbcamid=100000;
-# 
-#                 sql = "insert into cameras (CAMERA_NAME,IP,PORT,CHANNEL,LOGIN_NAME,PASSWORD,ID,ID2,ALERT_COUNT) values(%s,%s,%s,%s,%s,%s,%s,%s,%s) "
-#                 cursor.execute(sql,[camUid,ip,port,channel,username,password,dbcamid,"0","0"]);
-#                 db.commit();
-#         except MySQLdb.Error, e:
-#             print "MySQL Error:%s" % str(e)
-#             db.rollback();
-
+        # if not os.path.exists(camera['config_path']+'Device.ini'):
+        #     continue;
+        # mode_config = ConfigParser.ConfigParser();
+        # mode_config.read(camera['config_path']+'Device.ini');
+        #
+        # camUid=camera['uid'].strip();
+        #
+        # ip=mode_config.get('DEVICE','ip');
+        # ip=ip[0:(len(ip)-2)].strip();
+        # port=mode_config.get('DEVICE','port');
+        # port=port[0:(len(port)-2)].strip();
+        # username=mode_config.get('DEVICE','username');
+        # username=username[0:(len(username)-2)].strip();
+        # password=mode_config.get('DEVICE','password');
+        # password=password[0:(len(password)-2)].strip();
+        # channel=mode_config.get('DEVICE','channel');
+        # channel=channel[0:(len(channel)-2)].strip();
+        #
+        # try:
+        #     sql = "select cameraId,cameraIp,cameraPort,cameraChannel,cameraLoginName,cameraLoginPassword from camera where cameraId=%s "
+        #     cursor.execute(sql,[camUid]);
+        #     results = cursor.fetchall();
+        #     if len(results)==0 :
+        #         sql = "select ID from cameras order by ID DESC";
+        #         cursor.execute(sql);
+        #         results = cursor.fetchall();
+        #         if len(results)>0:
+        #             dbcamid=results[0][0]+1;
+        #         else:
+        #             dbcamid=100000;
+        #
+        #         sql = "insert into cameras (CAMERA_NAME,IP,PORT,CHANNEL,LOGIN_NAME,PASSWORD,ID,ID2,ALERT_COUNT) values(%s,%s,%s,%s,%s,%s,%s,%s,%s) "
+        #         cursor.execute(sql,[camUid,ip,port,channel,username,password,dbcamid,"0","0"]);
+        #         db.commit();
+        # except MySQLdb.Error, e:
+        #     print "MySQL Error:%s" % str(e)
+        #     db.rollback();
 
         try:
-#             frames_path=camera['frame_path'];
-#             CheckNewImage.remove_exceed(frames_path,filter=source_flag,max_threshold=camera['config']['config']['maxPerserveFrameNumber'],delete_num=camera['config']['config']['deleteNumberWhenExceed']);
-#             CheckNewImage.remove_exceed(frames_path,filter=result_flag,max_threshold=camera['config']['config']['maxPerserveFrameNumber'],delete_num=camera['config']['config']['deleteNumberWhenExceed']);
-#             CheckNewImage.remove_exceed(frames_path,filter=boundingbox_flag,max_threshold=camera['config']['config']['maxPerserveFrameNumber'],delete_num=camera['config']['config']['deleteNumberWhenExceed']);
-
             frames_path = os.path.join('camera', camera)
-            oneImage=CheckNewImage.get_last_new_image(frames_path,filter=source_flag);
-            if oneImage=='':
-                continue;
+            files = [file for file in os.listdir(frames_path) if os.path.isfile(os.path.join(frames_path, file))]
+            files.sort()
+            oneImage = ''
+            if len(files) > 0:
+                oneImage = files[0]
+            else:
+                continue
+            # oneImage=CheckNewImage.get_last_new_image(frames_path,filter=source_flag);
+            # if oneImage=='':
+            #     continue;
 
-            #print 'dealing:' + oneImage
-
-            #midImage=maineval_voc.processImage(net,originimage)
-            #origin = np.array(originimage, dtype=np.uint8)
-            #originimage=np.array(originimage, dtype=np.uint8);
-
-            #density=maineval_voc.getSoftMaxDensity(midImage);
-            #area=maineval_voc.getPersonArea(midImage);
-            #mix=maineval_voc.mixPicutre2(originimage,area,0,5);
-            imagename_with_path=frames_path + '/' + oneImage;
-            #originimage = Image.open()
+            #Detect
+            imagename_with_path = os.path.join(frames_path, oneImage)
             im = cv2.imread(imagename_with_path)
             mix = im;
-            frames = demo2.processImage(net, im)
+            #frames = demo2.processImage(net, im)
+
+
+            TEST_IMAGE_PATHS = ["examples/B1001.src.jpg"]
+            tf_boxes, tf_classes, tf_scores, shape = tf_inf.detect(sess, detection_graph, category_index, TEST_IMAGE_PATHS)
+
+            #convert tf results to frames
+            frames = []
+            for ind, one_class in tf_classes[0]:
+                if one_class == 1:  #1:person
+                    box = tf_boxes[0][ind]
+                    box = [box[0]*shape[1], box[1]*shape[0], box[2]*shape[1], box[3]*shape[0]]
+                    frames.append(box+[tf_scores[0][ind]])
 
             #Save .rs .txt
             if len(frames)>0:
@@ -336,7 +337,6 @@ while run:
 
     #configLoad.save_camera_config();
     ninter_time=time.clock()
-    sleeptime=float(configLoad.globalConfig['count_config']['default']['interval']);
     sleeptime=0.1;
     if ninter_time-inter_time>sleeptime:
         sleeptime=0

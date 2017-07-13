@@ -40,11 +40,13 @@ NET_DVR_JPEGPARA CameraJpegParas[500];
 char**CameraPath = new char*[500];
 char* BASEDIR="../human_count_project/camera/";
 
-sql::mysql::MySQL_Driver *driver;
-sql::Connection *con;
+MYSQL conn;
+int res;
+mysql_init(&conn);
+connect_rs = mysql_real_connect(&conn,"localhost","root","","test",0,NULL,CLIENT_FOUND_ROWS)
+if(connect_rs)  printf("Mysql connect success!\n");
+else    printf("Mysql connect fail!\n");
 
-driver = sql::mysql::get_mysql_driver_instance();
-con = driver->connect("tcp://127.0.0.1:3306", "user", "password");
 
 void GetCamera()
 {
@@ -191,6 +193,11 @@ void GetJPG()
 				}
 			}
 		}
+
+		char c = 0;
+		scanf("%c", &c);
+		if('q' == c)    break;
+
 		sleep(5);
 	}
 }
@@ -202,15 +209,10 @@ int main()
 	
 	GetCamera();
 	OpenCamera();
-	GetJPG();
 
-	char c = 0;
-	while('q' != c)
-	{
-		printf("input 'q' to quit\n");
-		printf("input: ");
-		scanf("%c", &c);
-	}
+	printf("input 'q' to quit\n");
+	GetJPG();
+	printf("q caught, quit\n");
 
 
     NET_DVR_Cleanup();
